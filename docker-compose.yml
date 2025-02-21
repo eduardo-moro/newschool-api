@@ -1,7 +1,4 @@
-version: '3.8'
-
 services:
-    # Serviço PHP
     app:
         build:
             context: .
@@ -11,21 +8,9 @@ services:
         working_dir: /var/www/html
         volumes:
             - .:/var/www/html
-        networks:
-            - newschool-network
-
-    # Serviço Nginx
-    webserver:
-        image: nginx:alpine
-        container_name: newschool-ranking-api-webserver
-        restart: unless-stopped
+            - ./docker/apache/apache.conf:/etc/apache2/sites-available/000-apache.conf
         ports:
             - "8000:80"
-        volumes:
-            - .:/var/www/html
-            - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
-        depends_on:
-            - app
         networks:
             - newschool-network
 

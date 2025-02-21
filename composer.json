@@ -57,7 +57,10 @@
             "@php artisan storage:link",
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
             "@php artisan key:generate --ansi",
-            "@php artisan migrate"
+            "@php artisan migrate:fresh --seed"
+        ],
+        "migrate": [
+            "@php artisan migrate:fresh --seed"
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
