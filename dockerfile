@@ -12,7 +12,6 @@ WORKDIR /var/www/html
 
 # Copiar o código-fonte para o container
 COPY . .
-COPY .env .env
 
 # Instalar dependências do Laravel (em modo de produção)
 RUN composer install --no-dev --optimize-autoloader
