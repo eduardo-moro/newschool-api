@@ -37,7 +37,7 @@ Certifique-se de ter os seguintes itens instalados em sua máquina:
 
 1. Clone o repositório:
 ```bash
-git clone https://github.com/seu-usuario/fitness-ranking-api.git
+git clone git@github.com:eduardo-moro/newschol-api.git
 cd fitness-ranking-api
 ```
 
