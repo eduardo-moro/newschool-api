@@ -1,6 +1,8 @@
 # Imagem base
 FROM php:8.4-fpm
 
+# Instalar programas
+RUN apt-get update && apt-get install -y libpq-dev git && docker-php-ext-install pdo pdo_pgsql
 
 # Instalar Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
@@ -10,11 +12,13 @@ WORKDIR /var/www/html
 
 # Copiar o código-fonte para o container
 COPY . .
+COPY .env .env
 
 # Instalar dependências do Laravel (em modo de produção)
 RUN composer install --no-dev --optimize-autoloader
 
 # Gerar a chave do Laravel automaticamente
+ENV COMPOSER_ALLOW_SUPERUSER=1
 RUN composer run setup-project
 
 # Permissões

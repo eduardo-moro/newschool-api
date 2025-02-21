@@ -6,18 +6,18 @@ services:
         build:
             context: .
             dockerfile: Dockerfile
-        container_name: fitness-ranking-api-app
+        container_name: newschool
         restart: unless-stopped
         working_dir: /var/www/html
         volumes:
             - .:/var/www/html
         networks:
-            - fitness-network
+            - newschool-network
 
     # Serviço Nginx
     webserver:
         image: nginx:alpine
-        container_name: fitness-ranking-api-webserver
+        container_name: newschool-ranking-api-webserver
         restart: unless-stopped
         ports:
             - "8000:80"
@@ -27,8 +27,8 @@ services:
         depends_on:
             - app
         networks:
-            - fitness-network
+            - newschool-network
 
 networks:
-    fitness-network:
+    newschool-network:
         driver: bridge
