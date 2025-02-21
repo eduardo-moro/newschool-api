@@ -14,6 +14,8 @@ WORKDIR /var/www/html
 COPY . .
 COPY ./docker/apache/apache.conf /etc/apache2/sites-available/000-default.conf
 
+RUN php -r "file_exists('.env') || copy('.env.example', '.env');"
+
 # Instalar dependências do Laravel (em modo de produção)
 RUN composer install --no-dev --optimize-autoloader
 
