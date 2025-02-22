@@ -23,6 +23,7 @@ WORKDIR /var/www/html
 
 # Copiar código-fonte para o container
 COPY . /var/www/app
+COPY ./docker/nginx/default.conf /etc/nginx/conf.d/default.conf
 WORKDIR /var/www/app
 
 # Ajustar permissões para o fpm
