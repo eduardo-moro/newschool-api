@@ -1,8 +1,22 @@
 # Imagem base
-FROM php:8.4-apache
+FROM php:8.4-fpm
 
 # Instalar extensões necessárias
-RUN apt-get update && apt-get install -y libpq-dev git && docker-php-ext-install pdo pdo_pgsql
+RUN apt-get update && apt-get install -y \
+    libfreetype-dev \
+    libjpeg62-turbo-dev \
+    libpng-dev \
+    zlib1g-dev \
+    libzip-dev \
+    unzip \
+    libpq-dev git && docker-php-ext-install pdo pdo_pgsql\
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) gd \
+    && docker-php-ext-install zip
+
+# Ajustar permissões para o fpm
+RUN chown -R www-data:www-data /var/www/app \
+    && chmod -R 775 /var/www/app/storage
 
 # Instalar Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
@@ -11,10 +25,8 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 WORKDIR /var/www/html
 
 # Copiar código-fonte para o container
-COPY . .
-COPY ./docker/apache/apache.conf /etc/apache2/sites-available/000-default.conf
-
-RUN php -r "file_exists('.env') || copy('.env.example', '.env');"
+COPY . /var/www/app
+WORKDIR /var/www/app
 
 # Instalar dependências do Laravel (em modo de produção)
 RUN composer install --no-dev --optimize-autoloader
@@ -27,10 +39,6 @@ RUN php artisan migrate --force
 
 # Criar o link simbólico para o storage
 RUN php artisan storage:link
-
-# Ajustar permissões para o Apache
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
-RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Expor a porta padrão do Apache
 EXPOSE 80
