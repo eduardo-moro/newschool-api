@@ -14,9 +14,6 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-install zip
 
-# Ajustar permissões para o fpm
-RUN chown -R www-data:www-data /var/www/app \
-    && chmod -R 775 /var/www/app/storage
 
 # Instalar Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
@@ -27,6 +24,10 @@ WORKDIR /var/www/html
 # Copiar código-fonte para o container
 COPY . /var/www/app
 WORKDIR /var/www/app
+
+# Ajustar permissões para o fpm
+RUN chown -R www-data:www-data /var/www/app \
+    && chmod -R 775 /var/www/app/storage
 
 # Instalar dependências do Laravel (em modo de produção)
 RUN composer install --no-dev --optimize-autoloader
