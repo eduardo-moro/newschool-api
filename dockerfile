@@ -41,5 +41,8 @@ RUN php artisan migrate --force
 # Criar o link simbólico para o storage
 RUN php artisan storage:link
 
-# Expor a porta padrão do Apache
+# Expor a porta para o serviço
 EXPOSE 80
+
+# Rodar o FPM
+CMD ["php-fpm"]
