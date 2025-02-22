@@ -1,23 +1,4 @@
-networks:
-    laravel:
-        driver: bridge
-
 services:
-    nginx:
-        image: nginx:alpine
-        container_name: nginx
-        restart: unless-stopped
-        tty: true
-        ports:
-            - "8000:80"
-        volumes:
-            - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
-            - .:/var/www/app:delegated
-        depends_on:
-            - newschool
-        networks:
-            - laravel
-
     newschool:
         build:
             context: .
@@ -25,9 +6,8 @@ services:
         container_name: newschool
         restart: unless-stopped
         tty: true
-        expose:
-            - "9000"
+        ports:
+            - "8000:80"
         volumes:
             - .:/var/www/app:delegated
-        networks:
-            - laravel
+            - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf

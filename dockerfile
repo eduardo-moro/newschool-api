@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y \
     zlib1g-dev \
     libzip-dev \
     unzip \
+    nginx \
     libpq-dev git && docker-php-ext-install pdo pdo_pgsql\
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) gd \
@@ -45,5 +46,7 @@ RUN php artisan storage:link
 # Expor a porta para o serviço
 EXPOSE 80
 
-# Rodar o FPM
-CMD ["php-fpm"]
+# Rodar o entrypoint
+COPY ./docker/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+CMD ["/entrypoint.sh"]
