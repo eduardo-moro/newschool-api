@@ -23,7 +23,7 @@ WORKDIR /var/www/html
 
 # Copiar código-fonte para o container
 COPY . /var/www/app
-COPY ./docker/nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY ./docker/nginx/default.conf /etc/nginx/http.d/default.conf
 WORKDIR /var/www/app
 
 # Instalar dependências do Laravel (em modo de produção)
