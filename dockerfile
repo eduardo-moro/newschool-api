@@ -1,23 +1,22 @@
 # Imagem base
-FROM php:8.4-fpm
+FROM php:8.4-fpm-alpine
 
 # Instalar extensões necessárias
-RUN apt-get update && apt-get install -y \
-    libfreetype-dev \
-    libjpeg62-turbo-dev \
-    libpng-dev \
-    zlib1g-dev \
-    libzip-dev \
-    unzip \
+RUN apk update && apk add --no-cache \
+    curl \
     nginx \
-    libpq-dev git && docker-php-ext-install pdo pdo_pgsql\
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) gd \
-    && docker-php-ext-install zip
-
+    libpng-dev \
+    libxml2-dev \
+    zip \
+    unzip \
+    postgresql-dev \
+    php-pdo \
+    php-pdo_pgsql \
+    php-pgsql \
+    && docker-php-ext-install pdo_pgsql
 
 # Instalar Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+COPY --from=composer:2.7.1 /usr/bin/composer /usr/local/bin/composer
 
 # Configurar diretório de trabalho
 WORKDIR /var/www/html
@@ -26,10 +25,6 @@ WORKDIR /var/www/html
 COPY . /var/www/app
 COPY ./docker/nginx/default.conf /etc/nginx/conf.d/default.conf
 WORKDIR /var/www/app
-
-# Ajustar permissões para o fpm
-RUN chown -R www-data:www-data /var/www/app \
-    && chmod -R 775 /var/www/app/storage
 
 # Instalar dependências do Laravel (em modo de produção)
 RUN composer install --no-dev --optimize-autoloader
@@ -50,3 +45,8 @@ EXPOSE 80
 COPY ./docker/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 CMD ["/entrypoint.sh"]
+
+# Ajustar permissões para o fpm
+USER root
+
+RUN chmod 777 -R /var/www/app
